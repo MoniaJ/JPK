@@ -14,6 +14,15 @@ arkusz1 = raport.active
 arkusz1.title = 'sprzedaż'
 arkusz2 = raport.create_sheet('zakup')
 
+ft = Font(name='Arial',size=10, italic=True)
+wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
+for col in range (1,25):
+    arkusz1.cell(column=col, row=12).font = ft
+    arkusz1.cell(column=col, row=12).alignment = wt
+for col in range (1,11):
+    arkusz2.cell(column=col, row=12).font = ft
+    arkusz2.cell(column=col, row=12).alignment = wt
+
 Tk().withdraw()
 filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
 print(filename)
@@ -30,7 +39,7 @@ początek_taga = root.tag[:liczba]
 
 ''' NAGŁÓWEK '''
 
-lista_nagłowek = ['KodFormularza:','WariantFormularza:','CelZlozenia:','DataWytworzeniaJPK:','DataOd:','DataDo:','NazwaSystemu:']
+lista_nagłowek = ['KodFormularza: ','WariantFormularza: ','CelZlozenia: ','DataWytworzeniaJPK: ','DataOd: ','DataDo: ','NazwaSystemu: ']
 for child in root:
     if child.tag == początek_taga + 'Naglowek':
         count_rows = 1
@@ -42,8 +51,12 @@ for child in root:
                 od = wiersz.text
             if count_rows == 6:
                 do = wiersz.text
-            arkusz1.cell(column=1,row=count_rows).value = wiersz.text
+            if count_rows < 8:
+                arkusz1.cell(column=1,row=count_rows).value = lista_nagłowek[count_rows-1]+wiersz.text
+                arkusz2.cell(column=1,row=count_rows).value = lista_nagłowek[count_rows-1]+wiersz.text
+            
             count_rows += 1
+            print('count_rows:',count_rows)
             for item in lista_nagłowek:
                 if wiersz.tag == początek_taga + item:
                     arkusz1.cell(column=1,row=lista_nagłowek.index(item)+1).value = item
@@ -182,4 +195,5 @@ print('count_purchase',count_purchase)
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
 raport.save(nazwa_pliku)  
+
 
