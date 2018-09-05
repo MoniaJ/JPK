@@ -14,21 +14,23 @@ arkusz1 = raport.active
 arkusz1.title = 'sprzedaż'
 arkusz2 = raport.create_sheet('zakup')
 
-ft = Font(name='Arial',size=10, italic=True)
+# formatowanie wybranych wierszy
+ft1 = Font(name='Arial',size=10, italic=True)
+ft2 = Font(name='Arial',size=10, bold=True)
 wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
 for col in range (1,27):
-    arkusz1.cell(column=col, row=12).font = ft
+    arkusz1.cell(column=col, row=12).font = ft1
+    arkusz1.cell(column=col, row=13).font = ft2
     arkusz1.cell(column=col, row=12).alignment = wt
 for col in range (1,11):
-    arkusz2.cell(column=col, row=12).font = ft
+    arkusz2.cell(column=col, row=12).font = ft1
+    arkusz2.cell(column=col, row=13).font = ft2
     arkusz2.cell(column=col, row=12).alignment = wt
 
 Tk().withdraw()
 filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
 print(filename)
 
-#filename = r"C:\Users\Monika\Desktop\JPK\JPK_02_2018.xml"
-#nazwa_pliku = "testi24 " + numer_pliku + ".xml"
 tree = ET.parse(filename)
 root = tree.getroot()
 print(root.tag)
@@ -39,30 +41,32 @@ początek_taga = root.tag[:liczba]
 
 ''' NAGŁÓWEK '''
 
-lista_nagłowek = ['KodFormularza: ','WariantFormularza: ','CelZlozenia: ','DataWytworzeniaJPK: ','DataOd: ','DataDo: ','NazwaSystemu: ']
+lista_naglowek = ['KodFormularza: ','WariantFormularza: ','CelZlozenia: ','DataWytworzeniaJPK: ','DataOd: ','DataDo: ','NazwaSystemu: ']
 for child in root:
     if child.tag == początek_taga + 'Naglowek':
         count_rows = 1
         for wiersz in child:
             #print(wiersz.tag)
-            if count_rows == 4: #te 3 zmienne potrzebne do nazwy pliku xlsx
-                wersja_jpk = wiersz.text[:10] + "_" + wiersz.text[11:13] + wiersz.text[14:16] + wiersz.text[17:19]
+            if count_rows == 4: # te 3 zmienne potrzebne do nazwy pliku .xlsx
+                data = wiersz.text[:10]
+                h = wiersz.text[11:13]
+                m = wiersz.text[14:16]
+                s = wiersz.text[17:19]
+                wersja_jpk = data + "_" + h + m + s
             if count_rows == 5:
                 od = wiersz.text
             if count_rows == 6:
                 do = wiersz.text
-            if count_rows < 8:
-                arkusz1.cell(column=1,row=count_rows).value = lista_nagłowek[count_rows-1]+wiersz.text
-                arkusz2.cell(column=1,row=count_rows).value = lista_nagłowek[count_rows-1]+wiersz.text
-            
+            if count_rows < 8: # wstawia informacje do kategorii nagłówka z listy lista_naglowek
+                arkusz1.cell(column=1,row=count_rows).value = lista_naglowek[count_rows-1] + wiersz.text
+                arkusz2.cell(column=1,row=count_rows).value = lista_naglowek[count_rows-1] + wiersz.text
             count_rows += 1
-            print('count_rows:',count_rows)
-            for item in lista_nagłowek:
+            for item in lista_naglowek:
                 if wiersz.tag == początek_taga + item:
-                    arkusz1.cell(column=1,row=lista_nagłowek.index(item)+1).value = item
-                    arkusz1.cell(column=3,row=lista_nagłowek.index(item)+1).value = wiersz.text
-                    arkusz2.cell(column=1,row=lista_nagłowek.index(item)+1).value = item
-                    arkusz2.cell(column=3,row=lista_nagłowek.index(item)+1).value = wiersz.text
+                    arkusz1.cell(column=1,row=lista_naglowek.index(item)+1).value = item
+                    arkusz1.cell(column=3,row=lista_naglowek.index(item)+1).value = wiersz.text
+                    arkusz2.cell(column=1,row=lista_naglowek.index(item)+1).value = item
+                    arkusz2.cell(column=3,row=lista_naglowek.index(item)+1).value = wiersz.text
             
             if wiersz.tag == początek_taga + 'KodFormularza':
                 slownik_atrybutow = wiersz.attrib
@@ -93,19 +97,16 @@ for child in root:
 
 ''' SPRZEDAŻ '''
 
+# wstawianie nagłówków kolumn
 lista_sprzedaz = ['LpSprzedazy','NrKontrahenta', 'NazwaKontrahenta','AdresKontrahenta',
         'DowodSprzedazy','DataWystawienia','K_15','K_16','K_17','K_18','K_19',
         'K_20','K_21','K_22','K_23','K_24','K_25','K_26','K_27','K_28','K_29','K_30','K_32',
         'K_33','K_34','K_35'] 
-
-
 for item in lista_sprzedaz:
     arkusz1.cell(column=lista_sprzedaz.index(item)+1,row=12).value = item
 
 count_sales = 14
 for child in root:
-    #print(child.tag[:liczba])
-    #print(child.tag)
     if child.tag == początek_taga + 'SprzedazWiersz':
         for faktura in child:
             for item in lista_sprzedaz:
@@ -127,24 +128,27 @@ for child in root:
                 arkusz1.cell(column=1,row=10).value = 'Kontrolna kwota podatku należnego:'
                 arkusz1.cell(column=5,row=10).value = podatek_należny
 
-kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
-for a in kolumny:
-    #formułka = '=sum(' + a + '4' + ':' + str(a + str(count_sales-2)) + ')'
-    formułka = '=sum(' + a + '14' + ':' + a + str(liczba_wierszy_sprzedaży+13) + ')'
-    #arkusz1[a+str(count_sales-1)] = formułka
-    arkusz1[a + '13'] = formułka
-lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X','Y','Z']
+#konstruowanie formuły excel do komórki J10
+sums = str(liczba_wierszy_sprzedaży+13)
+literki = ['H', 'J', 'L', 'N', 'P', 'R', 'T', 'V', 'X']
+dluga_formulka = '=sum(E10'
+for literka in literki:
+    czlon = ') - sum(' + literka + '14:' + literka
+    dluga_formulka += czlon
+    dluga_formulka += sums
+dluga_formulka = dluga_formulka + ')'
 arkusz1['H10'] = 'różnica:'
-arkusz1['J10'] = '=sum(E10) - sum(H14:H' + str(liczba_wierszy_sprzedaży+13) + ') - sum(J14:J' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(L14:L' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(N14:N' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(P14:P' + str(liczba_wierszy_sprzedaży+13) + ') - sum(R14:R' + str(liczba_wierszy_sprzedaży+13) + ') - sum(T14:T' + str(liczba_wierszy_sprzedaży+13) + ') - sum(V14:V' + str(liczba_wierszy_sprzedaży+13) + ')- sum(X14:X' + str(liczba_wierszy_sprzedaży+13) + ')' 
-podatek_należny_razem = 0
-# for a in lista_podatek_nalezny:
-#     podatek = arkusz1[a + '4'].value
-#     #podatek = float(podatek)
-#     print(podatek, type(podatek))
-    #podatek_należny_razem += float(arkusz1[a + '4'].value
+arkusz1['J10'] = dluga_formulka
 
-#podatek_należny_razem = round(float(podatek_należny_razem),2)
-#arkusz2['J2'] = podatek_należny_razem.value
+#formuly excel do sumowania kolumn
+arkusz1.cell(column=6,row=13).value = 'Razem:'
+kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+for sth in kolumny:    
+    formułka = '=sum(' + sth + '14' + ':' + sth + sums + ')'    
+    arkusz1[sth + '13'] = formułka
+lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X','Y','Z']
+
+podatek_należny_razem = 0
 
 print('count_sales',count_sales)
 
@@ -159,7 +163,6 @@ for item in lista_zakup:
 
 count_purchase = 14
 for child in root:
-
     if child.tag == początek_taga + 'ZakupWiersz':      
         for faktura in child:
             #print(item.tag) 
@@ -183,15 +186,21 @@ for child in root:
                 arkusz2.cell(column=1,row=10).value = 'Kontrolna kwota podatku naliczonego:'
                 arkusz2.cell(column=5,row=10).value = podatek_naliczony
 
+#formuły excel w wierszu 13
+arkusz2.cell(column=6,row=13).value = 'Razem:'
 kolumny = ['G','H','I','J']
-for a in kolumny:
-    #formułka = '=sum(' + a + '4' + ':' + str(a + str(count_sales-2)) + ')'
-    formułka = '=sum(' + a + '14' + ':' + a + str(liczba_wierszy_zakupów+13) + ')'
-    #arkusz1[a+str(count_sales-1)] = formułka
-    arkusz2[a + '13'] = formułka
+for sth in kolumny:
+    formułka = '=sum(' + sth + '14' + ':' + sth + sums + ')'
+    arkusz2[sth + '13'] = formułka
+
+#formuła excel różnicy:
 arkusz2['H10'] = 'różnica:'
-arkusz2['J10'] = '=sum(E10) - sum(H14:H' + str(liczba_wierszy_zakupów+13) + ') - sum(J14:J' + str(liczba_wierszy_zakupów+13) + ')'
+arkusz2['J10'] = '=sum(E10) - sum(H14:H' + sums + ') - sum(J14:J' + sums + ')'
 print('count_purchase',count_purchase)
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
 raport.save(nazwa_pliku) 
+
+
+
+
