@@ -16,7 +16,7 @@ arkusz2 = raport.create_sheet('zakup')
 
 ft = Font(name='Arial',size=10, italic=True)
 wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
-for col in range (1,25):
+for col in range (1,27):
     arkusz1.cell(column=col, row=12).font = ft
     arkusz1.cell(column=col, row=12).alignment = wt
 for col in range (1,11):
@@ -95,7 +95,7 @@ for child in root:
 
 lista_sprzedaz = ['LpSprzedazy','NrKontrahenta', 'NazwaKontrahenta','AdresKontrahenta',
         'DowodSprzedazy','DataWystawienia','K_15','K_16','K_17','K_18','K_19',
-        'K_20','K_23','K_24','K_25','K_26','K_27','K_28','K_29','K_30','K_32',
+        'K_20','K_21','K_22','K_23','K_24','K_25','K_26','K_27','K_28','K_29','K_30','K_32',
         'K_33','K_34','K_35'] 
 
 
@@ -127,15 +127,15 @@ for child in root:
                 arkusz1.cell(column=1,row=10).value = 'Kontrolna kwota podatku należnego:'
                 arkusz1.cell(column=5,row=10).value = podatek_należny
 
-kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X']
+kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 for a in kolumny:
     #formułka = '=sum(' + a + '4' + ':' + str(a + str(count_sales-2)) + ')'
     formułka = '=sum(' + a + '14' + ':' + a + str(liczba_wierszy_sprzedaży+13) + ')'
     #arkusz1[a+str(count_sales-1)] = formułka
     arkusz1[a + '13'] = formułka
-lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X']
+lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X','Y','Z']
 arkusz1['H10'] = 'różnica:'
-arkusz2['J10'] = '=sum(E10) - sum(H14:H' + str(liczba_wierszy_sprzedaży+13) + ') - sum(J14:J' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(L14:L' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(N14:N' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(P14:P' + str(liczba_wierszy_sprzedaży+13) + ') - sum(R14:R' + str(liczba_wierszy_sprzedaży+13) + ') - sum(T14:T' + str(liczba_wierszy_sprzedaży+13) + ') - sum(V14:V' + str(liczba_wierszy_sprzedaży+13) + ')- sum(X14:X' + str(liczba_wierszy_sprzedaży+13) + ')' 
+arkusz1['J10'] = '=sum(E10) - sum(H14:H' + str(liczba_wierszy_sprzedaży+13) + ') - sum(J14:J' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(L14:L' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(N14:N' + str(liczba_wierszy_sprzedaży+13) + ')  - sum(P14:P' + str(liczba_wierszy_sprzedaży+13) + ') - sum(R14:R' + str(liczba_wierszy_sprzedaży+13) + ') - sum(T14:T' + str(liczba_wierszy_sprzedaży+13) + ') - sum(V14:V' + str(liczba_wierszy_sprzedaży+13) + ')- sum(X14:X' + str(liczba_wierszy_sprzedaży+13) + ')' 
 podatek_należny_razem = 0
 # for a in lista_podatek_nalezny:
 #     podatek = arkusz1[a + '4'].value
@@ -194,6 +194,4 @@ arkusz2['J10'] = '=sum(E10) - sum(H14:H' + str(liczba_wierszy_zakupów+13) + ') 
 print('count_purchase',count_purchase)
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
-raport.save(nazwa_pliku)  
-
-
+raport.save(nazwa_pliku) 
