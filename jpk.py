@@ -16,12 +16,14 @@ arkusz2 = raport.create_sheet('zakup')
 
 # formatowanie wybranych wierszy
 ft1 = Font(name='Arial',size=8, italic=True)
-ft2 = Font(name='Arial',size=8, bold=True)
+ft2 = Font(name='Arial',size=9, bold=True)
 wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
 for col in range (1,27):
     arkusz1.cell(column=col, row=17).font = ft1
-    arkusz1.cell(column=col, row=18).font = ft2
+    arkusz1.cell(column=col, row=18).font = ft1
+    arkusz1.cell(column=col, row=19).font = ft2
     arkusz1.cell(column=col, row=17).alignment = wt
+    arkusz1.cell(column=col, row=18).alignment = wt
 for col in range (1,11):
     arkusz2.cell(column=col, row=17).font = ft1
     arkusz2.cell(column=col, row=18).font = ft2
@@ -94,10 +96,17 @@ lista_sprzedaz = ['LpSprzedazy','NrKontrahenta', 'NazwaKontrahenta','AdresKontra
         'DowodSprzedazy','DataWystawienia','K_15','K_16','K_17','K_18','K_19',
         'K_20','K_21','K_22','K_23','K_24','K_25','K_26','K_27','K_28','K_29','K_30','K_32',
         'K_33','K_34','K_35'] 
+list_sales_headers = ['sprzedaż krajowa 5%', 'VAT 5%', 'sprzedaż krajowa 7% lub 8%', 'VAT 7% lub 8%',
+     'sprzedaż krajowa 22% lub 23%', 'VAT 22% lub 23%', 'WDT', 'Eksport', "WNT", 'VAT WNT', 
+     'Import', 'VAT Import', 'Import uslug z wył. art. 28b', 'VAT imp.usł. z wył. art. 28b', 
+     'Import usług art. 28b', "VAT imp. usł. art. 28b", 'Dostawa art. 17 ust. 1 pkt 5', 'VAT dostawa art. 17 ust. 1 pkt 5', 
+     'Dostawa art. 17 ust. 1 pkt 7 lub 8 (nabywca)', 'VAT dostawa art. 17 ust. 1 pkt 7 lub 8 (nabywca)'  ]
 for item in lista_sprzedaz:
     arkusz1.cell(column=lista_sprzedaz.index(item)+1,row=17).value = item
+for item in list_sales_headers:
+    arkusz1.cell(column=list_sales_headers.index(item)+7,row=18).value = item
 
-count_sales = 19
+count_sales = 20
 for child in root:
     if child.tag == początek_taga + 'SprzedazWiersz':
         for faktura in child:
@@ -121,11 +130,11 @@ for child in root:
                 arkusz1.cell(column=5,row=14).value = podatek_należny
 
 #konstruowanie formuły excel do komórki J10
-sums_sales = str(liczba_wierszy_sprzedaży+18)
+sums_sales = str(liczba_wierszy_sprzedaży+19)
 literki = ['H', 'J', 'L', 'P', 'R', 'T', 'V', 'X', 'Z']
 dluga_formulka = '=sum(E14'
 for literka in literki:
-    czlon = ') - sum(' + literka + '19:' + literka
+    czlon = ') - sum(' + literka + '20:' + literka
     dluga_formulka += czlon
     dluga_formulka += sums_sales
 dluga_formulka = dluga_formulka + ')'
@@ -133,11 +142,11 @@ arkusz1['A15'] = 'różnica:'
 arkusz1['B15'] = dluga_formulka
 
 #formuly excel do sumowania kolumn
-arkusz1.cell(column=6,row=18).value = 'Razem:'
+arkusz1.cell(column=6,row=19).value = 'Razem:'
 kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 for sth in kolumny:    
-    formułka = '=sum(' + sth + '19' + ':' + sth + sums_sales + ')'    
-    arkusz1[sth + '18'] = formułka
+    formułka = '=sum(' + sth + '20' + ':' + sth + sums_sales + ')'    
+    arkusz1[sth + '19'] = formułka
 lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X','Y','Z']
 
 podatek_należny_razem = 0
