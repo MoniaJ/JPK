@@ -114,6 +114,7 @@ for child in root:
                 if faktura.tag == początek_taga + item:
                     if item[0] == 'K':
                         arkusz1.cell(column=lista_sprzedaz.index(item)+1,row=count_sales).value = round(float(faktura.text),2)
+                        arkusz1.cell(column=lista_sprzedaz.index(item)+1,row=count_sales).number_format = '# ##0.00'
                     else:
                         arkusz1.cell(column=lista_sprzedaz.index(item)+1,row=count_sales).value = faktura.text
         count_sales += 1
@@ -128,7 +129,7 @@ for child in root:
                 podatek_należny = round(float(item.text),2)
                 arkusz1.cell(column=1,row=14).value = 'Kontrolna kwota podatku należnego:'
                 arkusz1.cell(column=5,row=14).value = podatek_należny
-
+                arkusz1.cell(column=5,row=14).number_format = '# ##0.00'
 #konstruowanie formuły excel do komórki J10
 sums_sales = str(liczba_wierszy_sprzedaży+19)
 literki = ['H', 'J', 'L', 'P', 'R', 'T', 'V', 'X', 'Z']
@@ -140,13 +141,15 @@ for literka in literki:
 dluga_formulka = dluga_formulka + ')'
 arkusz1['A15'] = 'różnica:'
 arkusz1['B15'] = dluga_formulka
+arkusz1['B15'].number_format = '# ##0.00'
 
 #formuly excel do sumowania kolumn
 arkusz1.cell(column=6,row=19).value = 'Razem:'
 kolumny = ['G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 for sth in kolumny:    
     formułka = '=sum(' + sth + '20' + ':' + sth + sums_sales + ')'    
-    arkusz1[sth + '19'] = formułka
+    arkusz1[sth + '19'] = formułka    
+    arkusz1.cell(column=kolumny.index(sth)+7,row=19).number_format = '# ##0.00'
 lista_podatek_nalezny = ['H','J','L','N','P','R','T','V','X','Y','Z']
 
 podatek_należny_razem = 0
@@ -172,6 +175,7 @@ for child in root:
                 if faktura.tag == początek_taga + item:
                     if item[0] == 'K':
                         arkusz2.cell(column=lista_zakup.index(item)+1,row=count_purchase).value = round(float(faktura.text),2)
+                        arkusz2.cell(column=lista_zakup.index(item)+1,row=count_purchase).number_format = '# ##0.00'
                     else:
                         arkusz2.cell(column=lista_zakup.index(item)+1,row=count_purchase).value = faktura.text
         count_purchase += 1
@@ -186,6 +190,7 @@ for child in root:
                 podatek_naliczony = round(float(item.text),2)
                 arkusz2.cell(column=1,row=14).value = 'Kontrolna kwota podatku naliczonego:'
                 arkusz2.cell(column=5,row=14).value = podatek_naliczony
+                arkusz2.cell(column=5,row=14).number_format = '# ##0.00'
 
 #formuły excel w wierszu 15
 sums_purch = str(liczba_wierszy_zakupów+18)
@@ -194,10 +199,12 @@ kolumny = ['G','H','I','J']
 for sth in kolumny:
     formułka = '=sum(' + sth + '19' + ':' + sth + sums_purch + ')'
     arkusz2[sth + '18'] = formułka
+    arkusz2.cell(column=kolumny.index(sth)+7,row=18).number_format = '# ##0.00'
 
 #formuła excel różnicy:
 arkusz2['A15'] = 'różnica:'
-arkusz2['B15'] = '=sum(E14) - sum(H19:H' + sums_purch + ') - sum(J19:J' + sums_purch + ')'
+arkusz2['B15'] = '=sum(E14)-sum(H19:H' + sums_purch + ')-sum(J19:J' + sums_purch + ')'
+arkusz2['B15'].number_format = '# ##0.00'
 print('count_purchase',count_purchase)
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
