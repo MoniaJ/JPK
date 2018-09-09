@@ -15,8 +15,9 @@ arkusz1.title = 'sprzedaż'
 arkusz2 = raport.create_sheet('zakup')
 
 # formatowanie wybranych wierszy
-ft1 = Font(name='Arial',size=8, italic=True)
-ft2 = Font(name='Arial',size=9, bold=True)
+ft1 = Font(name='Calibri',size=9, italic=True)
+ft2 = Font(name='Calibri',size=11, bold=True)
+#ft2 = Font(name='C',size=9, bold=True)
 wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
 for col in range (1,27):
     arkusz1.cell(column=col, row=17).font = ft1
@@ -61,7 +62,9 @@ for child in root:
                 do = wiersz.text
             if count_rows < 13: # wstawia informacje do kategorii nagłówka z listy lista_naglowek
                 arkusz1.cell(column=1,row=count_rows).value = lista_naglowek[count_rows-6] + wiersz.text
+                arkusz1.cell(column=1,row=count_rows).font = ft1
                 arkusz2.cell(column=1,row=count_rows).value = lista_naglowek[count_rows-6] + wiersz.text
+                arkusz2.cell(column=1,row=count_rows).font = ft1
             count_rows += 1
             for item in lista_naglowek:
                 if wiersz.tag == początek_taga + item:
@@ -69,14 +72,19 @@ for child in root:
                     arkusz1.cell(column=3,row=lista_naglowek.index(item)+1).value = wiersz.text
                     arkusz2.cell(column=1,row=lista_naglowek.index(item)+1).value = item
                     arkusz2.cell(column=3,row=lista_naglowek.index(item)+1).value = wiersz.text
+                    
             
             if wiersz.tag == początek_taga + 'KodFormularza':
                 slownik_atrybutow = wiersz.attrib
         arkusz1.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
+        arkusz1.cell(column=1,row=4).font = ft1
         arkusz1.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
+        arkusz1.cell(column=1,row=5).font = ft1
         arkusz2.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
+        arkusz2.cell(column=1,row=4).font = ft1
         arkusz2.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
-            
+        arkusz2.cell(column=1,row=5).font = ft1
+
 ''' PODMIOT '''                
 
 lista_wartości = []
@@ -85,9 +93,13 @@ for child in root:
         for wiersz in child:
             lista_wartości.append(wiersz.text)
 arkusz1.cell(column=1,row=1).value = 'NIP: ' + lista_wartości[0]
+arkusz1.cell(column=1,row=1).font = ft1
 arkusz2.cell(column=1,row=1).value = 'NIP: ' + lista_wartości[0]
+arkusz2.cell(column=1,row=1).font = ft1
 arkusz1.cell(column=1,row=2).value = 'PelnaNazwa: ' + lista_wartości[1]
+arkusz1.cell(column=1,row=2).font = ft1
 arkusz2.cell(column=1,row=2).value = 'PelnaNazwa: ' + lista_wartości[1]
+arkusz2.cell(column=1,row=2).font = ft1
 
 ''' SPRZEDAŻ '''
 
@@ -124,11 +136,15 @@ for child in root:
             if item.tag == początek_taga + 'LiczbaWierszySprzedazy':
                 liczba_wierszy_sprzedaży = int(item.text)
                 arkusz1.cell(column=1,row=13).value = 'Kontrolna liczba wierszy sprzedaży:'
+                arkusz1.cell(column=1,row=13).font = ft1
                 arkusz1.cell(column=5,row=13).value = liczba_wierszy_sprzedaży
+                arkusz1.cell(column=5,row=13).font = ft1
             if item.tag == początek_taga + 'PodatekNalezny':
                 podatek_należny = round(float(item.text),2)
                 arkusz1.cell(column=1,row=14).value = 'Kontrolna kwota podatku należnego:'
+                arkusz1.cell(column=1,row=14).font = ft1
                 arkusz1.cell(column=5,row=14).value = podatek_należny
+                arkusz1.cell(column=5,row=14).font = ft1
                 arkusz1.cell(column=5,row=14).number_format = '# ##0.00'
 #konstruowanie formuły excel do komórki J10
 sums_sales = str(liczba_wierszy_sprzedaży+19)
@@ -140,8 +156,10 @@ for literka in literki:
     dluga_formulka += sums_sales
 dluga_formulka = dluga_formulka + ')'
 arkusz1['A15'] = 'różnica:'
+arkusz1['A15'].font = ft1
 arkusz1['B15'] = dluga_formulka
 arkusz1['B15'].number_format = '# ##0.00'
+arkusz1['B15'].font  =ft1
 
 #formuly excel do sumowania kolumn
 arkusz1.cell(column=6,row=19).value = 'Razem:'
@@ -185,11 +203,16 @@ for child in root:
             if item.tag == początek_taga + 'LiczbaWierszyZakupow':
                 liczba_wierszy_zakupów = int(item.text)
                 arkusz2.cell(column=1,row=13).value = 'Kontrolna liczba wierszy zakupów:'
+                arkusz2.cell(column=1,row=13).font = ft1
                 arkusz2.cell(column=5,row=13).value = liczba_wierszy_zakupów
+                arkusz2.cell(column=5,row=13).font = ft1
             if item.tag == początek_taga + 'PodatekNaliczony':
                 podatek_naliczony = round(float(item.text),2)
+
                 arkusz2.cell(column=1,row=14).value = 'Kontrolna kwota podatku naliczonego:'
+                arkusz2.cell(column=1,row=14).font = ft1
                 arkusz2.cell(column=5,row=14).value = podatek_naliczony
+                arkusz2.cell(column=5,row=14).font = ft1
                 arkusz2.cell(column=5,row=14).number_format = '# ##0.00'
 
 #formuły excel w wierszu 15
@@ -203,8 +226,10 @@ for sth in kolumny:
 
 #formuła excel różnicy:
 arkusz2['A15'] = 'różnica:'
+arkusz2['A15'].font = ft1
 arkusz2['B15'] = '=sum(E14)-sum(H19:H' + sums_purch + ')-sum(J19:J' + sums_purch + ')'
 arkusz2['B15'].number_format = '# ##0.00'
+arkusz2['B15'].font = ft1
 print('count_purchase',count_purchase)
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
