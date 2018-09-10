@@ -4,6 +4,7 @@ from openpyxl.cell import Cell
 from openpyxl.styles import Color, Fill, Font, Alignment
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from functions_JPK import *
 
 from datetime import date
 import os
@@ -15,20 +16,25 @@ arkusz1.title = 'sprzedaż'
 arkusz2 = raport.create_sheet('zakup')
 
 # formatowanie wybranych wierszy
+lista_komorek = [arkusz1['A1'], arkusz1['A2'], arkusz2['A1'],
+                 arkusz2['A2'], arkusz1['A4'], arkusz1['A5'], 
+                 arkusz2['A4'], arkusz2['A5'], arkusz1['A15'],
+                 arkusz1['B15'], arkusz2['A15'], arkusz2['B15'] ]
+format_ft1(lista_komorek)
+
 ft1 = Font(name='Calibri',size=9, italic=True)
 ft2 = Font(name='Calibri',size=11, bold=True)
-#ft2 = Font(name='C',size=9, bold=True)
-wt = Alignment(wrap_text=True, horizontal='center', vertical='center')
+align = Alignment(wrap_text=True, horizontal='center', vertical='center')
 for col in range (1,27):
     arkusz1.cell(column=col, row=17).font = ft1
     arkusz1.cell(column=col, row=18).font = ft1
     arkusz1.cell(column=col, row=19).font = ft2
-    arkusz1.cell(column=col, row=17).alignment = wt
-    arkusz1.cell(column=col, row=18).alignment = wt
+    arkusz1.cell(column=col, row=17).alignment = align
+    arkusz1.cell(column=col, row=18).alignment = align
 for col in range (1,11):
     arkusz2.cell(column=col, row=17).font = ft1
     arkusz2.cell(column=col, row=18).font = ft2
-    arkusz2.cell(column=col, row=17).alignment = wt
+    arkusz2.cell(column=col, row=17).alignment = align
 
 Tk().withdraw()
 filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
@@ -76,14 +82,11 @@ for child in root:
             
             if wiersz.tag == początek_taga + 'KodFormularza':
                 slownik_atrybutow = wiersz.attrib
-        arkusz1.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
-        arkusz1.cell(column=1,row=4).font = ft1
-        arkusz1.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
-        arkusz1.cell(column=1,row=5).font = ft1
-        arkusz2.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
-        arkusz2.cell(column=1,row=4).font = ft1
-        arkusz2.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
-        arkusz2.cell(column=1,row=5).font = ft1
+
+arkusz1.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
+arkusz1.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
+arkusz2.cell(column=1,row=4).value = 'kodSystemowy: ' + slownik_atrybutow['kodSystemowy']
+arkusz2.cell(column=1,row=5).value = 'wersjaSchemy: ' + slownik_atrybutow['wersjaSchemy']
 
 ''' PODMIOT '''                
 
@@ -93,13 +96,9 @@ for child in root:
         for wiersz in child:
             lista_wartości.append(wiersz.text)
 arkusz1.cell(column=1,row=1).value = 'NIP: ' + lista_wartości[0]
-arkusz1.cell(column=1,row=1).font = ft1
 arkusz2.cell(column=1,row=1).value = 'NIP: ' + lista_wartości[0]
-arkusz2.cell(column=1,row=1).font = ft1
 arkusz1.cell(column=1,row=2).value = 'PelnaNazwa: ' + lista_wartości[1]
-arkusz1.cell(column=1,row=2).font = ft1
 arkusz2.cell(column=1,row=2).value = 'PelnaNazwa: ' + lista_wartości[1]
-arkusz2.cell(column=1,row=2).font = ft1
 
 ''' SPRZEDAŻ '''
 
@@ -156,10 +155,8 @@ for literka in literki:
     dluga_formulka += sums_sales
 dluga_formulka = dluga_formulka + ')'
 arkusz1['A15'] = 'różnica:'
-arkusz1['A15'].font = ft1
 arkusz1['B15'] = dluga_formulka
 arkusz1['B15'].number_format = '# ##0.00'
-arkusz1['B15'].font  =ft1
 
 #formuly excel do sumowania kolumn
 arkusz1.cell(column=6,row=19).value = 'Razem:'
@@ -226,11 +223,11 @@ for sth in kolumny:
 
 #formuła excel różnicy:
 arkusz2['A15'] = 'różnica:'
-arkusz2['A15'].font = ft1
 arkusz2['B15'] = '=sum(E14)-sum(H19:H' + sums_purch + ')-sum(J19:J' + sums_purch + ')'
 arkusz2['B15'].number_format = '# ##0.00'
-arkusz2['B15'].font = ft1
 print('count_purchase',count_purchase)
+
+
 
 nazwa_pliku = "JPK_" + od + "_" + do + "_v_" + wersja_jpk + ".xlsx" 
 raport.save(nazwa_pliku) 
